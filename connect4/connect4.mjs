@@ -49,9 +49,7 @@ class Connect4 {
     }
 
     hoverEffect(col, ctx) {
-
         if (this.getAvailableRow(col) !== -1) {
-
             ctx.clearRect(0, 0, this.cols * 100, 100);
 
             for (let row = 0; row < this.rows; row++) {
