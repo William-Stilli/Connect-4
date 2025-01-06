@@ -55,7 +55,7 @@
                 });
                 cnv.addEventListener("mousemove", (e) => {
                     let x = e.clientX - cnv.offsetLeft;
-                    let y = e.clientY - cnv.offsetTop;
+                    //let y = e.clientY - cnv.offsetTop;
                     let col = Math.floor(x / 100);
                     connect4.hoverEffect(col, ctx);
                 });

@@ -52,16 +52,30 @@ class Connect4 {
         if (this.getAvailableRow(col) !== -1) {
             ctx.clearRect(0, 0, this.cols * 100, 100);
 
-            for (let row = 0; row < this.rows; row++) {
-                for (let c = 0; c < this.cols; c++) {
-                    ctx.beginPath();
-                    ctx.rect(c * 100, row * 100, 100, 100);
-                    ctx.stroke();
-                }
-            }
             ctx.beginPath();
             ctx.arc(col * 100 + 50, 50, 40, 0, 2 * Math.PI);
             ctx.stroke();
+
+            for (let r = 0; r < this.rows; r++) {
+                for (let c = 0; c < this.cols; c++) {
+                    ctx.beginPath();
+                    ctx.rect(c * 100, r * 100, 100, 100);
+                    if (!this.board[r][c].isEmpty()) {
+                        ctx.beginPath();
+                        ctx.rect(c * 100, r * 100, 100, 100);
+                        ctx.stroke();
+                        ctx.closePath();
+                        ctx.beginPath();
+                        ctx.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
+                        ctx.fillStyle = this.board[r][c].player === 'R' ? 'red' : 'yellow';
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                    ctx.stroke();
+                }
+            }
+
+
         }
     }
 
@@ -103,7 +117,7 @@ class Connect4 {
                 return row;
             }
         }
-        return -1; //return -1 quand la colonne est pleine
+        return -1;
     }
 
     placePiece(col, row) {
