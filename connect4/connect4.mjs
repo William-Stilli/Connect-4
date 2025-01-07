@@ -21,6 +21,7 @@ class Connect4 {
         this.currentPlayer = 'R';
         this.winner = null;
         this.moves = 0;
+        this.animationIsFinished = true;
         this.createBoard(ctx);
     }
 
@@ -49,7 +50,7 @@ class Connect4 {
     }
 
     hoverEffect(col, ctx) {
-        if (this.getAvailableRow(col) !== -1) {
+        if (this.getAvailableRow(col) !== -1 && this.winner === null) {
             ctx.clearRect(0, 0, this.cols * 100, 100);
 
             ctx.beginPath();
@@ -74,29 +75,123 @@ class Connect4 {
                     ctx.stroke();
                 }
             }
-
-
         }
     }
 
-    play(col, ctx) {
-        if (this.winner !== null) {
-            return;
+    animateWinningCombination(row, col, ctx) {
+        if (this.checkHorizontal(row)) {
+            for (let c = 0; c < this.cols; c++) {
+                if (this.board[row][c].player === this.currentPlayer) {
+                    ctx.beginPath();
+                    ctx.arc(c * 100 + 50, row * 100 + 50, 40, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'Blue';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                }
+            }
+        } else if (this.checkVertical(col)) {
+            for (let r = 0; r < this.rows; r++) {
+                if (this.board[r][col].player === this.currentPlayer) {
+                    ctx.beginPath();
+                    ctx.arc(col * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'Blue';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                }
+            }
         }
+        else if (this.checkPositiveSlopeDiagonal(row, col)) {
+            let r = row;
+            let c = col;
+            while (r > 0 && c > 0) {
+                r--;
+                c--;
+            }
+            while (r < this.rows && c < this.cols) {
+                if (this.board[r][c].player === this.currentPlayer) {
+                    ctx.beginPath();
+                    ctx.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'Blue';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                }
+                r++;
+                c++;
+            }
+        }
+        else if (this.checkNegativeSlopeDiagonal(row, col)) {
+            let r = row;
+            let c = col;
+            while (r > 0 && c < this.cols - 1) {
+                r--;
+                c++;
+            }
+            while (r < this.rows && c >= 0) {
+                if (this.board[r][c].player === this.currentPlayer) {
+                    ctx.beginPath();
+                    ctx.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'Blue';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                }
+                r++;
+                c--;
+            }
+        }
+    }
 
+    animatePiece(col, ctx) {
+        this.animationIsFinished = false;
         const row = this.getAvailableRow(col);
-        if (row === -1) {
-            this.showMove(col, row);
-            return;
+        if (row !== -1) {
+            const x = col * 100 + 50;
+            let y = -50;
+            const radius = 35;
+            const speed = 5;
+            const animate = () => {
+                ctx.clearRect(x - radius - 1, y - radius - 10, radius * 2 + 2, radius * 2);
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = this.currentPlayer === 'R' ? 'red' : 'yellow';
+                ctx.fill();
+                ctx.stroke();
+                y += speed;
+                if (y < row * 100 + 50) {
+                    requestAnimationFrame(animate);
+                } else {
+                    this.drawPiece(col, row, ctx);
+                    this.placePiece(col, row);
+                    this.showMove(col, row);
+                    this.switchPlayer();
+                    this.animationIsFinished = true;
+                }
+            };
+            animate();
         }
 
-        this.drawPiece(col, row, ctx);
+    }
 
-        this.placePiece(col, row);
+    play(col, ctx) {
+        if (this.animationIsFinished) {
+            if (this.winner !== null) {
+                return;
+            }
 
-        this.showMove(col, row);
+            const row = this.getAvailableRow(col);
+            if (row === -1) {
+                this.showMove(col, row);
+                return;
+            }
 
-        this.switchPlayer();
+            this.animatePiece(col, ctx);
+            // this.drawPiece(col, row, ctx);
+
+            // this.placePiece(col, row);
+
+            // this.showMove(col, row);
+
+            // this.switchPlayer();
+        }
     }
 
     drawPiece(col, row, ctx) {
@@ -129,6 +224,7 @@ class Connect4 {
     checkWinner(row, col) {
         if (this.checkHorizontal(row) || this.checkVertical(col) || this.checkDiagonal(row, col)) {
             this.winner = this.currentPlayer;
+            this.animateWinningCombination(row, col, this.ctx);
             return true;
         } else if (this.checkGridIsFull()) {
             this.winner = 'Draw';
