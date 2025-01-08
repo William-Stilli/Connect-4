@@ -26,7 +26,7 @@ class Connect4 {
     }
 
 
-    showMove(col, row) {
+    displayCurrentTurn(col, row) {
 
         if (this.winner !== null) {
             return movePlayed.innerHTML = (this.winner) === 'Draw' ? "Draw!" : `Player ${this.winner} wins!`;
@@ -63,14 +63,11 @@ class Connect4 {
                     ctx.rect(c * 100, r * 100, 100, 100);
                     if (!this.board[r][c].isEmpty()) {
                         ctx.beginPath();
-                        ctx.rect(c * 100, r * 100, 100, 100);
-                        ctx.stroke();
-                        ctx.closePath();
-                        ctx.beginPath();
                         ctx.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
                         ctx.fillStyle = this.board[r][c].player === 'R' ? 'red' : 'yellow';
                         ctx.fill();
                         ctx.stroke();
+                        ctx.closePath();
                     }
                     ctx.stroke();
                 }
@@ -147,7 +144,7 @@ class Connect4 {
             const x = col * 100 + 50;
             let y = -50;
             const radius = 35;
-            const speed = 5;
+            const speed = 9;
             const animate = () => {
                 ctx.clearRect(x - radius - 1, y - radius - 10, radius * 2 + 2, radius * 2);
                 ctx.beginPath();
@@ -155,20 +152,35 @@ class Connect4 {
                 ctx.fillStyle = this.currentPlayer === 'R' ? 'red' : 'yellow';
                 ctx.fill();
                 ctx.stroke();
+                this.hoverEffect(col, this.ctx);
+                for (let r = 0; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        ctx.beginPath();
+                        ctx.rect(c * 100, r * 100, 100, 100);
+                        if (!this.board[r][c].isEmpty()) {
+                            ctx.beginPath();
+                            ctx.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
+                            ctx.fillStyle = this.board[r][c].player === 'R' ? 'red' : 'yellow';
+                            ctx.fill();
+                            ctx.stroke();
+                            ctx.closePath();
+                        }
+                        ctx.stroke();
+                    }
+                }
                 y += speed;
                 if (y < row * 100 + 50) {
                     requestAnimationFrame(animate);
                 } else {
                     this.drawPiece(col, row, ctx);
                     this.placePiece(col, row);
-                    this.showMove(col, row);
+                    this.displayCurrentTurn(col, row);
                     this.switchPlayer();
                     this.animationIsFinished = true;
                 }
             };
             animate();
         }
-
     }
 
     play(col, ctx) {
@@ -179,18 +191,11 @@ class Connect4 {
 
             const row = this.getAvailableRow(col);
             if (row === -1) {
-                this.showMove(col, row);
+                this.displayCurrentTurn(col, row);
                 return;
             }
 
             this.animatePiece(col, ctx);
-            // this.drawPiece(col, row, ctx);
-
-            // this.placePiece(col, row);
-
-            // this.showMove(col, row);
-
-            // this.switchPlayer();
         }
     }
 
