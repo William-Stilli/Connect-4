@@ -83,7 +83,7 @@ class Connect4 {
         let count = 0;
         if (this.checkHorizontal(row)) {
             for (let c = 0; c < this.cols; c++) {
-                if (this.board[row][c].player === this.currentPlayer && count < 4 && (this.board[row][c + 1].player === this.currentPlayer || this.board[row][c + 1].player === null)) {
+                if (this.board[row][c].player === this.currentPlayer && count === 3 || this.board[row][c].player === this.currentPlayer && count < 4 && (this.board[row][c + 1].player === this.currentPlayer || this.board[row][c + 1].player === null)) {
                     ctxBall.beginPath();
                     ctxBall.arc(c * 100 + 50, row * 100 + 50, 40, 0, 2 * Math.PI);
                     ctxBall.strokeStyle = 'Blue';
@@ -114,8 +114,7 @@ class Connect4 {
                 c--;
             }
             while (r < this.rows && c < this.cols) {
-                if (count < 4 && this.board[r][c].player === this.currentPlayer) {
-                    console.log("je passe le test positif");
+                if ((c < 6 || r < 5) && count < 4 && this.board[r][c].player === this.currentPlayer && (r !== 6 && c !== 7) ? (this.board[r + 1][c + 1].player === this.currentPlayer || this.board[r + 1][c + 1].player === null) : this.board[r][c].player === this.currentPlayer) {
                     ctxBall.beginPath();
                     ctxBall.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
                     ctxBall.strokeStyle = 'Blue';
