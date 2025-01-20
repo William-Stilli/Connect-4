@@ -135,7 +135,7 @@ class Connect4 {
                 c++;
             }
             while (r < this.rows && c >= 0) {
-                if (count < 4 && this.board[r][c].player === this.currentPlayer) {
+                if (r > 0 && c > 0 && count < 4 && this.board[r][c].player === this.currentPlayer && (r !== 0 && r > 0 && c !== 0 && c > 0) ? this.board[r + 1][c - 1].player === this.currentPlayer : this.board[r][c].player === this.currentPlayer) {
                     console.log("je passe le test negatif");
                     ctxBall.beginPath();
                     ctxBall.arc(c * 100 + 50, r * 100 + 50, 40, 0, 2 * Math.PI);
