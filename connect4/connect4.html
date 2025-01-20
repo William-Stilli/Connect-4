@@ -33,6 +33,9 @@
             const cnv = document.getElementById("display");
             const ctx = cnv.getContext("2d");
 
+            const cnvBall = document.getElementById("ball");
+            const ctxBall = cnv.getContext("2d");
+
             const body = document.getElementsByName("body")
 
             const movePlayed = document.getElementById("movePlayed");
@@ -42,7 +45,7 @@
             body.onload = initialize();
 
             function initialize() {
-                let connect4 = new Connect4(6, 7, ctx, movePlayed);
+                let connect4 = new Connect4(6, 7, ctx, ctxBall, movePlayed);
                 btnRestart.addEventListener("click", () => {
                     location.reload();
                 });
@@ -51,13 +54,12 @@
                     let y = e.clientY - cnv.offsetTop;
                     let row = Math.floor(y / 100);
                     let col = Math.floor(x / 100);
-                    connect4.play(col, ctx);
+                    connect4.play(col, ctx, ctxBall);
                 });
                 cnv.addEventListener("mousemove", (e) => {
                     let x = e.clientX - cnv.offsetLeft;
-                    //let y = e.clientY - cnv.offsetTop;
                     let col = Math.floor(x / 100);
-                    connect4.hoverEffect(col, ctx);
+                    connect4.hoverEffect(col, ctx, ctxBall);
                 });
             }
         </script>
